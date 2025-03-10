@@ -1,93 +1,89 @@
-import React, { useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
-import ProfilePage from './pages/ProfilePage';
-import SubjectsPage from './pages/SubjectsPage';
-import SubjectDetailPage from './pages/SubjectDetailPage';
-import StudySessionsPage from './pages/StudySessionsPage';
-import SessionDetailPage from './pages/SessionDetailPage';
-import AssessmentsPage from './pages/AssessmentsPage';
-import ProgressPage from './pages/ProgressPage';
-import NotFoundPage from './pages/NotFoundPage';
-import Header from './components/common/Header';
-import Footer from './components/common/Footer';
-import ProtectedRoute from './components/common/ProtectedRoute';
-import { checkAuth } from './store/slices/authSlice';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Dashboard from "./components/Dashboard";
+// import Subjects from "./components/Subjects";
+import Subjects from "./components/subjects/Subjects";
+import SubjectDetail from "./components/subjects/SubjectDetails";
+import Sessions from "./components/study-sessions/Sessions";
+// import Topics from "./components/Topics";
+// import Assessments from "./components/Assessments";
+// import Progress from "./components/Progress";
+// import Sessions from "./components/Sessions";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-function App() {
-  const dispatch = useDispatch();
-  const { isAuthenticated, loading } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    dispatch(checkAuth());
-  }, [dispatch]);
-
-  if (loading) {
-    return <div className="app-loading">Loading...</div>;
-  }
-
+const App = () => {
   return (
-    <div className="app">
-      <Header />
-      <main className="main-content">
+    <Router>
+      <Navbar />
+      <div className="container mt-4">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={
-            !isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" />
-          } />
-          <Route path="/register" element={
-            !isAuthenticated ? <RegisterPage /> : <Navigate to="/dashboard" />
-          } />
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          } />
-          <Route path="/subjects" element={
-            <ProtectedRoute>
-              <SubjectsPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/subjects/:id" element={
-            <ProtectedRoute>
-              <SubjectDetailPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/study-sessions" element={
-            <ProtectedRoute>
-              <StudySessionsPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/study-sessions/:id" element={
-            <ProtectedRoute>
-              <SessionDetailPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/assessments" element={
-            <ProtectedRoute>
-              <AssessmentsPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/progress" element={
-            <ProtectedRoute>
-              <ProgressPage />
-            </ProtectedRoute>
-          } />
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/subjects"
+            element={
+              <ProtectedRoute>
+                <Subjects />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/subject/:subjectId"
+            element={
+              <ProtectedRoute>
+                <SubjectDetail />
+              </ProtectedRoute>
+            }
+          />
+          {/*
+          <Route
+
+            path="/topics"
+            element={
+              <ProtectedRoute>
+                <Topics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/assessments"
+            element={
+              <ProtectedRoute>
+                <Assessments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/progress"
+            element={
+              <ProtectedRoute>
+                <Progress />
+              </ProtectedRoute>
+            }
+          />*/}
+          <Route
+            path="/sessions"
+            element={
+              <ProtectedRoute>
+                <Sessions />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
