@@ -40,3 +40,22 @@
 .read-the-docs {
   color: #888;
 }
+
+.black-button {
+  background-color: #000; /* Black background */
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.black-button:hover {
+  background-color: #333; 
+}
+
+.black-button:active {
+  background-color: #555; 
+}
