@@ -3,7 +3,9 @@ import axios from "axios";
 
 // Thunk to get the user's profile
 export const getProfile = createAsyncThunk("auth/getProfile", async () => {
-  const response = await axios.get("/api/auth/profile");
+  const response = await axios.get(
+    "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/auth/profile"
+  );
   return response.data; // This returns a UserProfileResponse
 });
 
@@ -11,7 +13,10 @@ export const getProfile = createAsyncThunk("auth/getProfile", async () => {
 export const login = createAsyncThunk(
   "auth/login",
   async (credentials, { dispatch }) => {
-    const response = await axios.post("/api/auth/login", credentials);
+    const response = await axios.post(
+      "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/auth/login",
+      credentials
+    );
     const data = response.data; // AuthResponse
     if (data.Success) {
       // Set the token in axios for subsequent calls
@@ -26,7 +31,10 @@ export const login = createAsyncThunk(
 export const register = createAsyncThunk(
   "auth/register",
   async (userData, { dispatch }) => {
-    const response = await axios.post("/api/auth/register", userData);
+    const response = await axios.post(
+      "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/auth/register",
+      userData
+    );
     const data = response.data; // AuthResponse
     if (data.Success) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.Token}`;

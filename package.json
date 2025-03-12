@@ -15,6 +15,7 @@
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.8",
     "date-fns": "^4.1.0",
+    "env": "^0.0.2",
     "formik": "^2.4.6",
     "jwt-decode": "^4.0.0",
     "react": "^19.0.0",

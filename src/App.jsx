@@ -33,17 +33,19 @@ const App = () => {
           <Route
             path="/subjects"
             element={
-              <ProtectedRoute>
-                <Subjects />
-              </ProtectedRoute>
+              <Subjects />
+              // <ProtectedRoute>
+              //   <Subjects />
+              // </ProtectedRoute>
             }
           />
           <Route
             path="/subject/:subjectId"
             element={
-              <ProtectedRoute>
-                <SubjectDetail />
-              </ProtectedRoute>
+              <SubjectDetail />
+              // <ProtectedRoute>
+              //   <SubjectDetail />
+              // </ProtectedRoute>
             }
           />
           {/*

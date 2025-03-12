@@ -13,25 +13,25 @@ const TopicCard = ({ topic }) => {
   const handleEditTopic = () => {
     const updatedName = prompt("Update topic name:", topic.TopicName);
     if (updatedName && updatedName.trim() !== "") {
-      dispatch(updateTopic({ id: topic.TopicId, TopicName: updatedName }));
+      dispatch(updateTopic({ id: topic.topicId, TopicName: updatedName }));
     }
   };
 
   const handleDeleteTopic = () => {
-    dispatch(deleteTopic(topic.TopicId));
+    dispatch(deleteTopic(topic.topicId));
   };
 
   return (
     <div className="mb-3">
       <Card>
         <div className="card-body">
-          <h5 className="card-title">{topic.TopicName}</h5>
+          <h5 className="card-title">{topic.topicName}</h5>
           <p className="card-text">
-            <strong>Order:</strong> {topic.OrderIndex || "-"} <br />
-            <strong>Difficulty:</strong> {topic.DifficultyLevel || "-"} <br />
-            <strong>Est. Time:</strong> {topic.EstimatedCompletionTime || "-"}{" "}
-            minutes <br />
-            <strong>Status:</strong> {topic.IsActive ? "Active" : "Inactive"}
+            <strong>Order:</strong> {topic.orderIndex} <br />
+            <strong>Difficulty:</strong> {topic.difficultyLevel} <br />
+            <strong>Est. Time:</strong> {topic.estimatedCompletionTime} minutes{" "}
+            <br />
+            <strong>Status:</strong> {topic.isActive ? "Active" : "Inactive"}
           </p>
           <div className="d-flex flex-wrap">
             <Button

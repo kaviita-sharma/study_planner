@@ -2,14 +2,38 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const fetchTopics = createAsyncThunk("topics/fetchTopics", async () => {
-  const response = await axios.get("/api/Topics");
+  const response = await axios.get(
+    "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/Topics",
+    {
+      headers: { "ngrok-skip-browser-warning": "true" },
+    }
+  );
   return response.data;
 });
+
+export const getTopicForSubject = createAsyncThunk(
+  "topics/getTopicForSubject",
+  async (subjectId) => {
+    const response = await axios.get(
+      `https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/Topics/Subject/${subjectId}`,
+      {
+        headers: { "ngrok-skip-browser-warning": "true" },
+      }
+    );
+    return response.data;
+  }
+);
 
 export const addTopic = createAsyncThunk(
   "topics/addTopic",
   async (topicData) => {
-    const response = await axios.post("/api/Topics", topicData);
+    const response = await axios.post(
+      "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/Topics",
+      topicData,
+      {
+        headers: { "ngrok-skip-browser-warning": "true" },
+      }
+    );
     return response.data;
   }
 );
@@ -17,7 +41,13 @@ export const addTopic = createAsyncThunk(
 export const updateTopic = createAsyncThunk(
   "topics/updateTopic",
   async (topicData) => {
-    const response = await axios.put(`/api/Topics/${topicData.id}`, topicData);
+    const response = await axios.put(
+      `https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/Topics/${topicData.id}`,
+      topicData,
+      {
+        headers: { "ngrok-skip-browser-warning": "true" },
+      }
+    );
     return response.data;
   }
 );
@@ -25,7 +55,12 @@ export const updateTopic = createAsyncThunk(
 export const deleteTopic = createAsyncThunk(
   "topics/deleteTopic",
   async (id) => {
-    await axios.delete(`/api/Topics/${id}`);
+    await axios.delete(
+      `https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/Topics/${id}`,
+      {
+        headers: { "ngrok-skip-browser-warning": "true" },
+      }
+    );
     return id;
   }
 );
@@ -48,6 +83,17 @@ const topicsSlice = createSlice({
         state.topics = action.payload;
       })
       .addCase(fetchTopics.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(getTopicForSubject.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getTopicForSubject.fulfilled, (state, action) => {
+        state.loading = false;
+        state.topics = action.payload;
+      })
+      .addCase(getTopicForSubject.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSubjects } from "../../slices/subjectSlice";
-import { fetchTopics, addTopic } from "../../slices/topicSlice";
+import { fetchSubjectById } from "../../slices/subjectSlice";
+import { getTopicForSubject, addTopic } from "../../slices/topicSlice";
 import CircleLoader from "../common/Loader";
 import Button from "../common/Button";
 import TopicCard from "../topics/TopicCard";
@@ -11,32 +11,34 @@ import TopicModal from "../topics/TopicModal";
 const SubjectDetail = () => {
   const { subjectId } = useParams();
   const dispatch = useDispatch();
+
+  // Get subject data from subjects slice
   const {
     subjects,
     loading: subjectLoading,
     error: subjectError,
   } = useSelector((state) => state.subjects);
+
+  // Get topics data from topics slice
   const {
     topics,
     loading: topicsLoading,
     error: topicsError,
   } = useSelector((state) => state.topics);
+
   const [showTopicModal, setShowTopicModal] = useState(false);
 
+  // Fetch subject details and topics for this subject on mount or when subjectId changes
   useEffect(() => {
-    if (!subjects.length) {
-      dispatch(fetchSubjects());
-    }
-    dispatch(fetchTopics());
-  }, [dispatch, subjects.length]);
+    dispatch(fetchSubjectById(subjectId));
+    dispatch(getTopicForSubject(subjectId));
+  }, [dispatch, subjectId]);
 
-  // Get the selected subject from subjects slice
+  // Find the subject from the subjects array
   const subject = subjects.find((s) => s.id.toString() === subjectId);
 
-  // Filter topics that belong to this subject (assuming topic has a SubjectId field)
-  const subjectTopics = topics.filter(
-    (t) => t.SubjectId === parseInt(subjectId, 10)
-  );
+  // Use the topics returned by getTopicForSubject API (assumed to be an array)
+  const subjectTopics = Array.isArray(topics) ? topics : [];
 
   if (subjectLoading || topicsLoading || !subject) {
     return <CircleLoader />;
@@ -46,6 +48,7 @@ const SubjectDetail = () => {
     <div className="container mt-4">
       {subjectError && <div className="alert alert-danger">{subjectError}</div>}
       {topicsError && <div className="alert alert-danger">{topicsError}</div>}
+
       <h2>{subject.subjectName}</h2>
       <p>
         <strong>Status:</strong> {subject.status} <br />
