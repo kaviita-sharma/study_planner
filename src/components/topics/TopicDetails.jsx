@@ -7,11 +7,13 @@ import CircleLoader from "../common/Loader";
 import Button from "../common/Button";
 import SubTopicCard from "../sub-topics/SubTopicCard";
 import SubTopicModal from "../sub-topics/SubtopicModal";
+import { useNavigate } from "react-router-dom";
 
 const TopicDetails = () => {
   const {topicId } = useParams();
   const {subjectId} = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Get topic data from Redux store
   const { topics, loading: topicLoading, error: topicError } = useSelector((state) => state.topics);
@@ -75,6 +77,11 @@ const TopicDetails = () => {
     setSelectedSubtopic(subTopic);
   };
   
+  const handleStartSession = (subTopic) => {
+    // For example, redirect to /session/:id where you show subtopic details, timer, and feedback form.
+    // You may pass subTopic as state.
+    navigate(`/session/${subTopic.sessionId}`, { state: { subTopic } });
+  };
   return (
     <div className="container mt-4">
       {topicError && <div className="alert alert-danger">{topicError}</div>}
@@ -121,6 +128,7 @@ const TopicDetails = () => {
               topicId={topicId} 
               onEdit={handleEditSubtopic} 
               onCreateSession={handleCreateSession}
+              onStartSession={handleStartSession}
               selectedSubTopic={selectedSubtopic}/>
             </div>
           ))}

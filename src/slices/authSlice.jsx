@@ -2,66 +2,66 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API_BASE_URL from "../utils/config";
 import axios from "axios";
 
-// Helper function to get the token
+// Get token from localStorage when initializing Redux state
 const getToken = () => localStorage.getItem("token");
-const token = getToken();
 
-// Thunk to get the user's profile
-export const getProfile = createAsyncThunk("auth/getProfile", async () => {
+export const getProfile = createAsyncThunk("auth/getProfile", async (_, { getState }) => {
+  const token = getState().auth.token; // Get latest token from Redux state
+
+  if (!token) throw new Error("No token available"); // Prevent API call without token
+
   const response = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
-    headers: { "ngrok-skip-browser-warning": "true",
+    headers: {
+      "ngrok-skip-browser-warning": "true",
       Authorization: `Bearer ${token}`,
-     },
+    },
   });
-  return response.data; // This returns a UserProfileResponse
+
+  return response.data; // UserProfileResponse
 });
 
-// Thunk for user login
 export const login = createAsyncThunk(
   "auth/login",
-  async (credentials, { dispatch }) => {
-    const response = await axios.post(`${API_BASE_URL}/api/auth/login`, credentials);
-    const data = response.data; // AuthResponse
-    if (data.success) {
-      localStorage.setItem("token", data.token);
-      // Set the token in axios for subsequent calls
-      axios.defaults.headers.common["Authorization"] = `Bearer ${data.Token}`;
-      dispatch(getProfile());
+  async (credentials, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, credentials);
+      const data = response.data;
+
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+        dispatch(getProfile()); // Get user profile after login
+      }
+      return { user: data.user, token: data.token, message: data.message };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Login failed.");
     }
-    return { user: data.user, token: data.token, message: data.message };
   }
 );
 
-// Thunk for user registration
 export const register = createAsyncThunk(
   "auth/register",
   async (userData, { dispatch, rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/api/auth/register`, userData);
-      const data = response.data; // AuthResponse
+      const data = response.data;
 
-      if (data.Success) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${data.Token}`;
+      if (data.success) {
+        localStorage.setItem("token", data.token);
         dispatch(getProfile());
       }
       return data;
     } catch (error) {
-      if (error.response && error.response.status == 400) {
-        return rejectWithValue(error.response?.data?.message ||
-           "Registration failed. Please try again."
-      ); // Send error message to Redux
-      }
-      return rejectWithValue("An unexpected error occurred.");
+      return rejectWithValue(error.response?.data?.message || "Registration failed.");
     }
   }
 );
 
-
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null, // Will store the UserProfileResponse object
-    token: null,
+    user: null,
+    token: getToken(), // Load token from localStorage on init
     loading: false,
     error: null,
   },
@@ -69,55 +69,52 @@ const authSlice = createSlice({
     logout(state) {
       state.user = null;
       state.token = null;
+      localStorage.removeItem("token"); // Remove token from storage
       delete axios.defaults.headers.common["Authorization"];
     },
   },
   extraReducers: (builder) => {
     builder
-      // Login handlers
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload.success) { // Corrected property name
-          state.token = action.payload.token; // Corrected property name
-          state.user = action.payload.user; // Ensure user data is also stored
-          localStorage.setItem("token", action.payload.token); // Persist token
+        if (action.payload.token) {
+          state.token = action.payload.token;
+          state.user = action.payload.user;
         } else {
-          state.error = action.payload.message; // Corrected property name
+          state.error = action.payload.message;
         }
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload || "Login failed";
       })
-      // Register handlers
       .addCase(register.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload.Success) {
-          state.token = action.payload.Token;
+        if (action.payload.token) {
+          state.token = action.payload.token;
         } else {
-          state.error = action.payload.Message;
+          state.error = action.payload.message;
         }
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload || "Registration failed";
       })
-      // Get profile handlers
       .addCase(getProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(getProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload; // UserProfileResponse is stored here
+        state.user = action.payload;
       })
       .addCase(getProfile.rejected, (state, action) => {
         state.loading = false;

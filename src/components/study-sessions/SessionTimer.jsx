@@ -29,7 +29,7 @@ const SessionTimer = () => {
   };
 
   return (
-    <div className="card card-body">
+    <div className="card card-body">                     
       <h4>Time Elapsed: {formatTime(timeElapsed)}</h4>
       <div className="mb-2">
         {isRunning ? (
@@ -51,10 +51,6 @@ const SessionTimer = () => {
           Reset
         </button>
       </div>
-
-      <button className="btn btn-info" onClick={handleFocusCheck}>
-        Focus Check
-      </button>
     </div>
   );
 };

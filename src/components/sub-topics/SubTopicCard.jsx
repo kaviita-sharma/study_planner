@@ -23,7 +23,7 @@ const SubTopicCard = ({ subTopic, topicId, onEdit, onStartSession, onCreateSessi
   const handleSessionButtonClick = () => {
     if (subTopic.sessionId) {
       onStartSession(subTopic);
-      navigate("/start-session");
+      navigate(`/session/${subTopic.sessionId}`, { state: { subTopic } });
     } else {
       onCreateSession(subTopic); 
       setShowSessionForm((prev) => !prev);

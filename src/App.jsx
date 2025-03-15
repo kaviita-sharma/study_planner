@@ -10,7 +10,7 @@ import Topics from "./components/topics/Topics";
 import TopicDetails from "./components/topics/TopicDetails";
 import SubTopics from "./components/sub-topics/SubTopic";
 //import Assessments from "./components/assessments/Assesment";
-// import Progress from "./components/Progress";
+import Progress from "./pages/ProgressPage";
 // import Sessions from "./components/Sessions";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -36,27 +36,25 @@ const App = () => {
           <Route
             path="/subjects"
             element={
-              <Subjects />
-              // <ProtectedRoute>
-              //   <Subjects />
-              // </ProtectedRoute>
+               <ProtectedRoute>
+                <Subjects />
+               </ProtectedRoute>
             }
           />
           <Route
             path="/subject/:subjectId"
             element={
-              <SubjectDetail />
-              // <ProtectedRoute>
-              //   <SubjectDetail />
-              // </ProtectedRoute>
+               <ProtectedRoute>
+                <SubjectDetail />
+               </ProtectedRoute>
             }
           />
           <Route
             path="/topics"
             element={
-              //<ProtectedRoute>
+              <ProtectedRoute>
                 <Topics />
-              //</ProtectedRoute>
+              </ProtectedRoute>
             }
           />
           <Route
@@ -66,21 +64,11 @@ const App = () => {
           <Route
             path="/subTopics"
             element={
-              //<ProtectedRoute>
+              <ProtectedRoute>
                 <SubTopics />
-              //</ProtectedRoute>
+              </ProtectedRoute>
             }
           />
-          {/*
-          <Route
-            path="/assessments"
-            element={
-             // <ProtectedRoute>
-                <Assessments />
-             // </ProtectedRoute>
-            }
-          />
-          
           <Route
             path="/progress"
             element={
@@ -88,21 +76,21 @@ const App = () => {
                 <Progress />
               </ProtectedRoute>
             }
-          />*/}
+            />
           <Route
             path="/sessions"
             element={
-              //<ProtectedRoute>
+              <ProtectedRoute>
                 <Sessions />
-              //</ProtectedRoute>
+              </ProtectedRoute>
             }
           />
           <Route
-            path="/start-session"
+            path="/session/:sessionId"
             element={
-              //<ProtectedRoute>
+              <ProtectedRoute>
                 <Sessions1 />
-              //</ProtectedRoute>
+              </ProtectedRoute>
             }
           />
         </Routes>
