@@ -1,8 +1,9 @@
+// src/components/study-sessions/SessionModal.jsx
 import React from "react";
 import SessionForm from "./SessionForm";
 import Button from "../common/Button";
 
-const SessionModal = ({ show, onClose, onAdd }) => {
+const SessionModal = ({ show, onClose, onAdd, prefill }) => {
   if (!show) return null;
 
   const handleFormSubmit = (sessionData) => {
@@ -31,7 +32,7 @@ const SessionModal = ({ show, onClose, onAdd }) => {
               ></button>
             </div>
             <div className="modal-body">
-              <SessionForm onAdd={handleFormSubmit} />
+              <SessionForm onAdd={handleFormSubmit} prefill={prefill} />
             </div>
           </div>
         </div>

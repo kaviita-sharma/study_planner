@@ -1,15 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import API_BASE_URL from "../utils/config";
 
-const BASE_URL =
-  "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app";
+// Helper function to get the token
+const getToken = () => localStorage.getItem("token");
+const token = getToken();
 
 // Fetch all subjects
 export const fetchSubjects = createAsyncThunk(
   "subjects/fetchSubjects",
   async () => {
-    const response = await axios.get(`${BASE_URL}/api/Subjects`, {
-      headers: { "ngrok-skip-browser-warning": "true" },
+    const response = await axios.get(`${API_BASE_URL}/api/Subjects`, {
+      headers: { "ngrok-skip-browser-warning": "true",
+        Authorization: `Bearer ${token}`,
+       },
     });
     return response.data;
   }
@@ -19,8 +23,10 @@ export const fetchSubjects = createAsyncThunk(
 export const fetchSubjectById = createAsyncThunk(
   "subjects/fetchSubjectById",
   async (id) => {
-    const response = await axios.get(`${BASE_URL}/api/Subjects/${id}`, {
-      headers: { "ngrok-skip-browser-warning": "true" },
+    const response = await axios.get(`${API_BASE_URL}/api/Subjects/${id}`, {
+      headers: { "ngrok-skip-browser-warning": "true",
+        Authorization: `Bearer ${token}`,
+       },
     });
     return response.data;
   }
@@ -31,9 +37,12 @@ export const addSubject = createAsyncThunk(
   "subjects/addSubject",
   async (subjectData) => {
     const response = await axios.post(
-      `${BASE_URL}/api/Subjects/AddSubjectWithDetails`,
+      `${API_BASE_URL}/api/Subjects/AddSubjectWithDetails`,
       subjectData,
-      { headers: { "ngrok-skip-browser-warning": "true" } }
+      { headers: { "ngrok-skip-browser-warning": "true",
+        Authorization: `Bearer ${token}`,
+       },
+       }
     );
     return response.data;
   }
@@ -44,9 +53,11 @@ export const updateSubject = createAsyncThunk(
   "subjects/updateSubject",
   async (subjectData) => {
     const response = await axios.put(
-      `${BASE_URL}/api/Subjects/${subjectData.id}`,
+      `${API_BASE_URL}/api/Subjects/${subjectData.id}`,
       subjectData,
-      { headers: { "ngrok-skip-browser-warning": "true" } }
+      { headers: { "ngrok-skip-browser-warning": "true" ,
+        Authorization: `Bearer ${token}`,
+      }, }
     );
     return response.data;
   }
@@ -56,8 +67,10 @@ export const updateSubject = createAsyncThunk(
 export const deleteSubject = createAsyncThunk(
   "subjects/deleteSubject",
   async (id) => {
-    await axios.delete(`${BASE_URL}/api/Subjects/${id}`, {
-      headers: { "ngrok-skip-browser-warning": "true" },
+    await axios.delete(`${API_BASE_URL}/api/Subjects/${id}`, {
+      headers: { "ngrok-skip-browser-warning": "true",
+        Authorization: `Bearer ${token}`,
+       },
     });
     return id;
   }
@@ -67,8 +80,10 @@ export const deleteSubject = createAsyncThunk(
 export const fetchSubjectStatistics = createAsyncThunk(
   "subjects/fetchSubjectStatistics",
   async () => {
-    const response = await axios.get(`${BASE_URL}/api/Subjects/Statistics`, {
-      headers: { "ngrok-skip-browser-warning": "true" },
+    const response = await axios.get(`${API_BASE_URL}/api/Subjects/Statistics`, {
+      headers: { "ngrok-skip-browser-warning": "true",
+        Authorization: `Bearer ${token}`,
+       },
     });
     return response.data;
   }

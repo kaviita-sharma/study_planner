@@ -1,4 +1,40 @@
-import React, { useState } from "react";
+// src/components/study-sessions/SessionCard.jsx
+import React from "react";
+
+const SessionCard = ({ session, onEdit, onDelete }) => {
+  return (
+    <div className="card mb-3">
+      <div className="card-body">
+        <h5 className="card-title">{session.subject}</h5>
+        <p className="card-text">
+          <strong>Topic:</strong> {session.topic} <br />
+          <strong>Subtopic:</strong> {session.subtopic} <br />
+          <strong>Duration:</strong> {session.plannedDuration} minutes <br />
+          <strong>Difficulty:</strong> {session.difficulty} <br />
+          <strong>Date:</strong> {session.date}
+        </p>
+        {onEdit && (
+          <button className="btn btn-secondary me-2" onClick={() => onEdit(session)}>
+            Edit
+          </button>
+        )}
+        {onDelete && (
+          <button className="btn btn-danger" onClick={() => onDelete(session.id)}>
+            Delete
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default SessionCard;
+
+
+
+
+{/*
+  import React, { useState } from "react";
 import Card from "../common/Card";
 import Button from "../common/Button";
 import SessionTimer from "./SessionTimer";
@@ -69,3 +105,4 @@ const SessionCard = ({ session, onEdit, onDelete, onUpdateTimer }) => {
 };
 
 export default SessionCard;
+*/}

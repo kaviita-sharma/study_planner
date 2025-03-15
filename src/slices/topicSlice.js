@@ -1,11 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import API_BASE_URL from "../utils/config";
+
+const getToken = () => localStorage.getItem("token");
+const token = getToken();
 
 export const fetchTopics = createAsyncThunk("topics/fetchTopics", async () => {
   const response = await axios.get(
-    "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/Topics",
+    `${API_BASE_URL}/api/Topics`,
     {
-      headers: { "ngrok-skip-browser-warning": "true" },
+      headers: { "ngrok-skip-browser-warning": "true",
+        Authorization: `Bearer ${token}`,
+       },
     }
   );
   return response.data;
@@ -15,9 +21,11 @@ export const getTopicForSubject = createAsyncThunk(
   "topics/getTopicForSubject",
   async (subjectId) => {
     const response = await axios.get(
-      `https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/Topics/Subject/${subjectId}`,
+      `${API_BASE_URL}/api/Topics/Subject/${subjectId}`,
       {
-        headers: { "ngrok-skip-browser-warning": "true" },
+        headers: { "ngrok-skip-browser-warning": "true",
+          Authorization: `Bearer ${token}`,
+         },
       }
     );
     return response.data;
@@ -28,10 +36,12 @@ export const addTopic = createAsyncThunk(
   "topics/addTopic",
   async (topicData) => {
     const response = await axios.post(
-      "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/Topics",
+      `${API_BASE_URL}/api/Topics`,
       topicData,
       {
-        headers: { "ngrok-skip-browser-warning": "true" },
+        headers: { "ngrok-skip-browser-warning": "true",
+          Authorization: `Bearer ${token}`,
+         },
       }
     );
     return response.data;
@@ -42,10 +52,12 @@ export const updateTopic = createAsyncThunk(
   "topics/updateTopic",
   async (topicData) => {
     const response = await axios.put(
-      `https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/Topics/${topicData.id}`,
+      `${API_BASE_URL}/api/Topics/${topicData.id}`,
       topicData,
       {
-        headers: { "ngrok-skip-browser-warning": "true" },
+        headers: { "ngrok-skip-browser-warning": "true",
+          Authorization: `Bearer ${token}`,
+         },
       }
     );
     return response.data;
@@ -56,9 +68,11 @@ export const deleteTopic = createAsyncThunk(
   "topics/deleteTopic",
   async (id) => {
     await axios.delete(
-      `https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/Topics/${id}`,
+      `${API_BASE_URL}/api/Topics/${id}`,
       {
-        headers: { "ngrok-skip-browser-warning": "true" },
+        headers: { "ngrok-skip-browser-warning": "true",
+          Authorization: `Bearer ${token}`,
+         },
       }
     );
     return id;

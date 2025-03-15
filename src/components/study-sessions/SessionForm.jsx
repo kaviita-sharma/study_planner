@@ -1,64 +1,41 @@
+// src/components/study-sessions/SessionForm.jsx
 import React from "react";
-import { Formik, Form } from "formik";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import InputField from "../common/InputField";
 import Button from "../common/Button";
 
-const SessionForm = ({ onAdd }) => {
+const SessionForm = ({ prefill, onAdd, onCancel }) => {
   const initialValues = {
-    subjectId: "",
-    topicId: "",
-    subTopicId: "",
-    notes: "",
-    scheduledStartTime: "",
-    scheduledEndTime: "",
-    actualStartTime: "",
-    actualEndTime: "",
-    status: "Scheduled",
-    focusRating: "",
-    comprehensionRating: "",
+    title: prefill?.title || "",
+    scheduledStartTime: prefill?.scheduledStartTime
+    ? new Date(prefill.scheduledStartTime).toISOString().slice(0, 16)
+    : "",
+    scheduledEndTime: prefill?.scheduledEndTime
+    ? new Date(prefill.scheduledEndTime).toISOString().slice(0, 16)
+    : "",
+    focusRating: prefill?.focusRating || "",
+    comprehensionRating: prefill?.comprehensionRating || "",
+    status: prefill?.status || "Scheduled",
   };
 
   const validationSchema = Yup.object({
-    subjectId: Yup.string().trim().matches(/^\d*$/, "Must be a number"),
-    topicId: Yup.string().trim().matches(/^\d*$/, "Must be a number"),
-    subTopicId: Yup.string().trim().matches(/^\d*$/, "Must be a number"),
-    notes: Yup.string(),
-    scheduledStartTime: Yup.date().required("Scheduled start time is required"),
-    scheduledEndTime: Yup.date().required("Scheduled end time is required"),
-    actualStartTime: Yup.date().nullable(),
-    actualEndTime: Yup.date().nullable(),
+    title: Yup.string().required("Title is required"),
+    scheduledStartTime: Yup.date()
+      .transform((value, originalValue) => (originalValue ? value : null))
+      .required("Scheduled start time is required"),
+    scheduledEndTime: Yup.date()
+      .transform((value, originalValue) => (originalValue ? value : null))
+      .required("Scheduled end time is required"),
+    focusRating: Yup.number().min(0, "Min 0").max(10, "Max 10").nullable(),
+    comprehensionRating: Yup.number().min(0, "Min 0").max(10, "Max 10").nullable(),
     status: Yup.string()
-      .oneOf(["Scheduled", "InProgress", "Completed"])
-      .required("Status is required"),
-    focusRating: Yup.string().trim().matches(/^\d*$/, "Must be a number"),
-    comprehensionRating: Yup.string()
-      .trim()
-      .matches(/^\d*$/, "Must be a number"),
+      .oneOf(["Scheduled", "Completed", "Cancelled", "Missed"], "Invalid status")
+      .required("status is required"),
   });
 
   const handleSubmit = (values, { resetForm }) => {
-    const newSession = {
-      subjectId: values.subjectId ? parseInt(values.subjectId, 10) : null,
-      topicId: values.topicId ? parseInt(values.topicId, 10) : null,
-      subTopicId: values.subTopicId ? parseInt(values.subTopicId, 10) : null,
-      notes: values.notes,
-      scheduledStartTime: new Date(values.scheduledStartTime).toISOString(),
-      scheduledEndTime: new Date(values.scheduledEndTime).toISOString(),
-      actualStartTime: values.actualStartTime
-        ? new Date(values.actualStartTime).toISOString()
-        : null,
-      actualEndTime: values.actualEndTime
-        ? new Date(values.actualEndTime).toISOString()
-        : null,
-      status: values.status,
-      focusRating: values.focusRating ? parseInt(values.focusRating, 10) : null,
-      comprehensionRating: values.comprehensionRating
-        ? parseInt(values.comprehensionRating, 10)
-        : null,
-    };
-
-    onAdd(newSession);
+    console.log("Submitting form with values:", values);
+    onAdd(values);
     resetForm();
   };
 
@@ -67,93 +44,94 @@ const SessionForm = ({ onAdd }) => {
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
+      enableReinitialize
     >
-      {({ isSubmitting }) => (
-        <Form className="mb-5">
-          <div className="row g-3">
-            {/* IDs */}
-            <div className="col-md-4">
-              <InputField
-                label="Subject ID"
-                name="subjectId"
-                type="text"
-                placeholder="Enter subject ID"
-              />
-            </div>
-            <div className="col-md-4">
-              <InputField
-                label="Topic ID"
-                name="topicId"
-                type="text"
-                placeholder="Enter topic ID"
-              />
-            </div>
-            <div className="col-md-4">
-              <InputField
-                label="Subtopic ID"
-                name="subTopicId"
-                type="text"
-                placeholder="Enter subtopic ID"
-              />
-            </div>
-            {/* Notes */}
-            <div className="col-md-12">
-              <InputField
-                label="Notes"
-                name="notes"
-                type="text"
-                placeholder="Enter session notes"
-              />
-            </div>
-            {/* Scheduled times */}
-            <div className="col-md-6">
-              <label className="form-label">Scheduled Start Time</label>
-              <InputField name="scheduledStartTime" type="datetime-local" />
-            </div>
-            <div className="col-md-6">
-              <label className="form-label">Scheduled End Time</label>
-              <InputField name="scheduledEndTime" type="datetime-local" />
-            </div>
-            {/* Actual times (optional) */}
-            <div className="col-md-6">
-              <label className="form-label">Actual Start Time</label>
-              <InputField name="actualStartTime" type="datetime-local" />
-            </div>
-            <div className="col-md-6">
-              <label className="form-label">Actual End Time</label>
-              <InputField name="actualEndTime" type="datetime-local" />
-            </div>
-            {/* Status and Ratings */}
-            <div className="col-md-4">
-              <label className="form-label">Status</label>
-              <select name="status" className="form-select">
-                <option value="Scheduled">Scheduled</option>
-                <option value="InProgress">In Progress</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-            <div className="col-md-4">
-              <InputField
-                label="Focus Rating"
-                name="focusRating"
-                type="text"
-                placeholder="Enter focus rating"
-              />
-            </div>
-            <div className="col-md-4">
-              <InputField
-                label="Comprehension Rating"
-                name="comprehensionRating"
-                type="text"
-                placeholder="Enter comprehension rating"
-              />
-            </div>
-            <div className="col-md-12">
+      {({ isSubmitting, errors, touched }) => (
+        <Form className="row g-3">
+          <div className="col-md-12">
+            <label className="form-label">Title</label>
+            <Field
+              type="text"
+              name="title"
+              className="form-control"
+              style={{ width: "100%" }}
+            />
+            {errors.title && touched.title && (
+              <div className="text-danger">{errors.title}</div>
+            )}
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">Scheduled Start Time</label>
+            <Field
+              type="datetime-local"
+              name="scheduledStartTime"
+              className="form-control"
+            />
+            {errors.scheduledStartTime && touched.scheduledStartTime && (
+              <div className="text-danger">{errors.scheduledStartTime}</div>
+            )}
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">Scheduled End Time</label>
+            <Field
+              type="datetime-local"
+              name="scheduledEndTime"
+              className="form-control"
+            />
+            {errors.scheduledEndTime && touched.scheduledEndTime && (
+              <div className="text-danger">{errors.scheduledEndTime}</div>
+            )}
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">Focus Rating</label>
+            <Field type="number" name="focusRating" className="form-control" />
+            {errors.focusRating && touched.focusRating && (
+              <div className="text-danger">{errors.focusRating}</div>
+            )}
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">Comprehension Rating</label>
+            <Field
+              type="number"
+              name="comprehensionRating"
+              className="form-control"
+            />
+            {errors.comprehensionRating && touched.comprehensionRating && (
+              <div className="text-danger">{errors.comprehensionRating}</div>
+            )}
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">status</label>
+            <Field as="select" name="status" className="form-select">
+              <option value="Scheduled">Scheduled</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+              <option value="Missed">Missed</option>
+            </Field>
+            {errors.status && touched.status && (
+              <div className="text-danger">{errors.status}</div>
+            )}
+          </div>
+
+          <div className="col-12 d-flex">
+            <Button
+              type="submit"
+              label={isSubmitting ? "Submitting..." : "Create Session"}
+              className="btn btn-primary"
+            />
+            {onCancel && (
               <Button
-                type="submit"
-                label={isSubmitting ? "Adding..." : "Add Session"}
+                type="button"
+                label="Cancel"
+                onClick={onCancel}
+                className="btn btn-secondary ms-2"
               />
-            </div>
+            )}
           </div>
         </Form>
       )}

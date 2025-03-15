@@ -25,7 +25,7 @@ const Login = () => {
     if (user) {
       toast.success("Login successful!");
       setTimeout(() => {
-        navigate("/");
+        navigate("/subjects");
       }, 1000);
     }
   }, [user, navigate]);

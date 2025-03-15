@@ -1,10 +1,11 @@
 import React from "react";
 import Card from "../common/Card";
 import Button from "../common/Button";
+import { Link } from "react-router-dom";
 
 const SubjectCard = ({ subject, onEdit, onDelete }) => {
   return (
-    <Card className="mb-3">
+    <Card className="mb-3 border border-secondary rounded">
       <div className="card-body">
         <h5 className="card-title">{subject.subjectName}</h5>
         <p className="card-text">
@@ -32,8 +33,14 @@ const SubjectCard = ({ subject, onEdit, onDelete }) => {
           <Button
             onClick={() => onDelete(subject.id)}
             label="Delete"
-            className="btn-danger"
+            className="btn-danger me-2"
           />
+          <Link
+            to={`/subject/${subject.id}`}
+            className="btn btn-primary btn-sm"
+          >
+            View Details
+          </Link>
         </div>
       </div>
     </Card>

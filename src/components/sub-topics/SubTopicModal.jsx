@@ -1,15 +1,22 @@
 import React from "react";
 import SubTopicForm from "./SubTopicForm";
-import Button from "../common/Button";
 
-const SubTopicModal = ({ show, onClose, onAdd }) => {
+const SubTopicModal = ({
+  show,
+  onClose,
+  onSave,          
+  selectedSubtopic, 
+  mode = "add",   
+}) => {
   if (!show) return null;
 
   const handleFormSubmit = (subTopicData) => {
-    onAdd(subTopicData);
+    onSave(subTopicData);
     onClose();
   };
 
+  // Modal title depends on mode
+  const modalTitle = mode === "edit" ? "Edit Subtopic" : "Add New Subtopic";
   return (
     <>
       <div
@@ -22,7 +29,7 @@ const SubTopicModal = ({ show, onClose, onAdd }) => {
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">Add New Subtopic</h5>
+              <h5 className="modal-title">{modalTitle}</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -31,7 +38,15 @@ const SubTopicModal = ({ show, onClose, onAdd }) => {
               ></button>
             </div>
             <div className="modal-body">
-              <SubTopicForm onAdd={handleFormSubmit} />
+              {/*
+                Pass selectedSubtopic and mode to SubTopicForm
+                so it can pre-fill fields if we're editing
+              */}
+              <SubTopicForm
+                onAdd={handleFormSubmit}
+                selectedSubtopic={selectedSubtopic}
+                mode={mode}
+              />
             </div>
           </div>
         </div>

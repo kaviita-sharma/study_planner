@@ -4,34 +4,29 @@ import * as Yup from "yup";
 import InputField from "../common/InputField";
 import Button from "../common/Button";
 
-const TopicForm = ({ onAdd }) => {
+const TopicForm = ({ onAdd, selectedTopic }) => {
   const initialValues = {
-    topicName: "",
-    orderIndex: "",
-    difficultyLevel: "",
-    estimatedCompletionTime: "",
-    isActive: true,
+    topicName: selectedTopic?.topicName || "",
+    orderIndex: selectedTopic?.orderIndex?.toString() || "",
+    difficultyLevel: selectedTopic?.difficultyLevel?.toString() || "",
+    estimatedCompletionTime: selectedTopic?.estimatedCompletionTime?.toString() || "",
+    isActive: selectedTopic?.isActive ?? true,
   };
 
   const validationSchema = Yup.object({
     topicName: Yup.string().required("Topic name is required"),
     orderIndex: Yup.string().trim().matches(/^\d*$/, "Must be a number"),
     difficultyLevel: Yup.string().trim().matches(/^\d*$/, "Must be a number"),
-    estimatedCompletionTime: Yup.string()
-      .trim()
-      .matches(/^\d*$/, "Must be a number"),
+    estimatedCompletionTime: Yup.string().trim().matches(/^\d*$/, "Must be a number"),
   });
 
   const handleSubmit = (values, { resetForm }) => {
     const newTopic = {
+      ...selectedTopic, // Preserve existing data when editing
       topicName: values.topicName,
       orderIndex: values.orderIndex ? parseInt(values.orderIndex, 10) : null,
-      difficultyLevel: values.difficultyLevel
-        ? parseInt(values.difficultyLevel, 10)
-        : null,
-      estimatedCompletionTime: values.estimatedCompletionTime
-        ? parseInt(values.estimatedCompletionTime, 10)
-        : null,
+      difficultyLevel: values.difficultyLevel ? parseInt(values.difficultyLevel, 10) : null,
+      estimatedCompletionTime: values.estimatedCompletionTime ? parseInt(values.estimatedCompletionTime, 10) : null,
       isActive: values.isActive,
     };
 
@@ -41,6 +36,7 @@ const TopicForm = ({ onAdd }) => {
 
   return (
     <Formik
+      enableReinitialize // Ensures form updates when `selectedTopic` changes
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -49,36 +45,16 @@ const TopicForm = ({ onAdd }) => {
         <Form>
           <div className="row g-3">
             <div className="col-md-6">
-              <InputField
-                label="Topic Name"
-                name="topicName"
-                type="text"
-                placeholder="Enter topic name"
-              />
+              <InputField label="Topic Name" name="topicName" type="text" placeholder="Enter topic name" />
             </div>
             <div className="col-md-6">
-              <InputField
-                label="Order Index"
-                name="orderIndex"
-                type="text"
-                placeholder="Enter order index"
-              />
+              <InputField label="Order Index" name="orderIndex" type="text" placeholder="Enter order index" />
             </div>
             <div className="col-md-6">
-              <InputField
-                label="Difficulty Level"
-                name="difficultyLevel"
-                type="text"
-                placeholder="1-10"
-              />
+              <InputField label="Difficulty Level" name="difficultyLevel" type="text" placeholder="1-10" />
             </div>
             <div className="col-md-6">
-              <InputField
-                label="Est. Completion Time"
-                name="estimatedCompletionTime"
-                type="text"
-                placeholder="Minutes"
-              />
+              <InputField label="Est. Completion Time" name="estimatedCompletionTime" type="text" placeholder="Minutes" />
             </div>
             <div className="col-md-12">
               <div className="form-check">
@@ -90,16 +66,11 @@ const TopicForm = ({ onAdd }) => {
                   checked={values.isActive}
                   onChange={() => setFieldValue("isActive", !values.isActive)}
                 />
-                <label className="form-check-label" htmlFor="isActive">
-                  Active
-                </label>
+                <label className="form-check-label" htmlFor="isActive">Active</label>
               </div>
             </div>
             <div className="col-md-12">
-              <Button
-                type="submit"
-                label={isSubmitting ? "Adding..." : "Add Topic"}
-              />
+              <Button type="submit" label={isSubmitting ? "Saving..." : selectedTopic ? "Update Topic" : "Add Topic"} />
             </div>
           </div>
         </Form>

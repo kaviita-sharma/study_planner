@@ -2,15 +2,17 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API_BASE_URL from "../utils/config";
 import axios from "axios";
 
+// Helper function to get the token
+const getToken = () => localStorage.getItem("token");
+const token = getToken();
+
 // Thunk to get the user's profile
 export const getProfile = createAsyncThunk("auth/getProfile", async () => {
-<<<<<<< Updated upstream
-  const response = await axios.get(
-    "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/auth/profile"
-  );
-=======
-  const response = await axios.get(`${API_BASE_URL}/api/auth/profile`);
->>>>>>> Stashed changes
+  const response = await axios.get(`${API_BASE_URL}/api/auth/profile`, {
+    headers: { "ngrok-skip-browser-warning": "true",
+      Authorization: `Bearer ${token}`,
+     },
+  });
   return response.data; // This returns a UserProfileResponse
 });
 
@@ -18,38 +20,21 @@ export const getProfile = createAsyncThunk("auth/getProfile", async () => {
 export const login = createAsyncThunk(
   "auth/login",
   async (credentials, { dispatch }) => {
-<<<<<<< Updated upstream
-    const response = await axios.post(
-      "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/auth/login",
-      credentials
-    );
-=======
     const response = await axios.post(`${API_BASE_URL}/api/auth/login`, credentials);
->>>>>>> Stashed changes
     const data = response.data; // AuthResponse
-    if (data.Success) {
+    if (data.success) {
+      localStorage.setItem("token", data.token);
       // Set the token in axios for subsequent calls
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.Token}`;
       dispatch(getProfile());
     }
-    return data;
+    return { user: data.user, token: data.token, message: data.message };
   }
 );
 
 // Thunk for user registration
 export const register = createAsyncThunk(
   "auth/register",
-<<<<<<< Updated upstream
-  async (userData, { dispatch }) => {
-    const response = await axios.post(
-      "https://bcd7-2401-4900-1c52-18be-10e1-866a-521b-6a54.ngrok-free.app/api/auth/register",
-      userData
-    );
-    const data = response.data; // AuthResponse
-    if (data.Success) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${data.Token}`;
-      dispatch(getProfile());
-=======
   async (userData, { dispatch, rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/api/auth/register`, userData);
@@ -67,7 +52,6 @@ export const register = createAsyncThunk(
       ); // Send error message to Redux
       }
       return rejectWithValue("An unexpected error occurred.");
->>>>>>> Stashed changes
     }
   }
 );
@@ -97,10 +81,12 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload.Success) {
-          state.token = action.payload.Token;
+        if (action.payload.success) { // Corrected property name
+          state.token = action.payload.token; // Corrected property name
+          state.user = action.payload.user; // Ensure user data is also stored
+          localStorage.setItem("token", action.payload.token); // Persist token
         } else {
-          state.error = action.payload.Message;
+          state.error = action.payload.message; // Corrected property name
         }
       })
       .addCase(login.rejected, (state, action) => {

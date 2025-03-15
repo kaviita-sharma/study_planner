@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSubjectById } from "../../slices/subjectSlice";
-import { getTopicForSubject, addTopic } from "../../slices/topicSlice";
+import { getTopicForSubject, addTopic, updateTopic } from "../../slices/topicSlice";
 import CircleLoader from "../common/Loader";
 import Button from "../common/Button";
 import TopicCard from "../topics/TopicCard";
@@ -27,6 +27,8 @@ const SubjectDetail = () => {
   } = useSelector((state) => state.topics);
 
   const [showTopicModal, setShowTopicModal] = useState(false);
+  const [modalMode, setModalMode] = useState("add"); // "add" or "edit"
+  const [selectedTopic, setSelectedTopic] = useState(false);
 
   // Fetch subject details and topics for this subject on mount or when subjectId changes
   useEffect(() => {
@@ -44,6 +46,32 @@ const SubjectDetail = () => {
     return <CircleLoader />;
   }
 
+  const handleAddTopicClick = () => {
+    setSelectedTopic(null);
+    setModalMode("add");
+    setShowTopicModal(true);
+  };
+
+  // Open modal for editing a topic
+  const handleEditTopic = (topic) => {
+    setSelectedTopic(topic);
+    setModalMode("edit");
+    setShowTopicModal(true);
+  };
+
+  // Handle add/update topic
+  const handleSaveTopic = (topicData) => {
+    if (modalMode === "edit") {
+      dispatch(updateTopic({ id: selectedTopic.topicId, ...topicData }))
+        .then(() => dispatch(getTopicForSubject(subjectId))); // Refresh topics after update
+    } else {
+      dispatch(addTopic({ ...topicData, SubjectId: parseInt(subjectId, 10) }))
+        .then(() => dispatch(getTopicForSubject(subjectId))); // Refresh topics after addition
+    }
+    setShowTopicModal(false);
+  };
+
+
   return (
     <div className="container mt-4">
       {subjectError && <div className="alert alert-danger">{subjectError}</div>}
@@ -60,7 +88,7 @@ const SubjectDetail = () => {
         <h3>Topics</h3>
         <Button
           label="Add Topic"
-          onClick={() => setShowTopicModal(true)}
+          onClick={handleAddTopicClick}
           className="btn btn-success"
         />
       </div>
@@ -68,14 +96,11 @@ const SubjectDetail = () => {
       <TopicModal
         show={showTopicModal}
         onClose={() => setShowTopicModal(false)}
-        onAdd={(topicData) => {
-          // Append the subjectId to the topic data before dispatching
-          dispatch(
-            addTopic({ ...topicData, SubjectId: parseInt(subjectId, 10) })
-          );
-          setShowTopicModal(false);
-        }}
+        onSave={handleSaveTopic}
+        mode={modalMode} // "add" or "edit"
+        selectedTopic={selectedTopic} // Topic data for editing
       />
+
 
       {subjectTopics.length === 0 ? (
         <div
@@ -90,7 +115,7 @@ const SubjectDetail = () => {
         <div className="row">
           {subjectTopics.map((topic) => (
             <div className="col-md-6" key={topic.TopicId}>
-              <TopicCard topic={topic} />
+              <TopicCard topic={topic} subjectId={subjectId} onEdit={handleEditTopic} />
             </div>
           ))}
         </div>

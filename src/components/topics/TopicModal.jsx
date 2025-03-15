@@ -1,20 +1,19 @@
 import React from "react";
 import TopicForm from "./TopicForm";
-import Button from "../common/Button";
 
-const TopicModal = ({ show, onClose, onAdd }) => {
+const TopicModal = ({ show, onClose, onSave, selectedTopic }) => {
   if (!show) return null;
 
   const handleFormSubmit = (topicData) => {
-    onAdd(topicData);
-    onClose();
+    onSave(topicData);
+    onClose(); // Close modal after saving
   };
 
   return (
     <>
       <div
-        className="modal fade show"
-        style={{ display: "block" }}
+        className={`modal fade ${show ? "show" : ""}`} 
+        style={{ display: show ? "block" : "none" }} 
         tabIndex="-1"
         role="dialog"
         aria-modal="true"
@@ -22,7 +21,7 @@ const TopicModal = ({ show, onClose, onAdd }) => {
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">Add New Topic</h5>
+              <h5 className="modal-title">{selectedTopic ? "Edit Topic" : "Add New Topic"}</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -31,12 +30,12 @@ const TopicModal = ({ show, onClose, onAdd }) => {
               ></button>
             </div>
             <div className="modal-body">
-              <TopicForm onAdd={handleFormSubmit} />
+              <TopicForm onAdd={handleFormSubmit} selectedTopic={selectedTopic} />
             </div>
           </div>
         </div>
       </div>
-      <div className="modal-backdrop fade show"></div>
+      {show && <div className="modal-backdrop fade show"></div>}
     </>
   );
 };

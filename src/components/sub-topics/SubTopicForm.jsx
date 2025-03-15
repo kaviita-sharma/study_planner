@@ -4,13 +4,14 @@ import * as Yup from "yup";
 import InputField from "../common/InputField";
 import Button from "../common/Button";
 
-const SubTopicForm = ({ onAdd }) => {
+const SubTopicForm = ({ onAdd, selectedSubtopic}) => {
+
   const initialValues = {
-    subTopicName: "",
-    difficultyLevel: "",
-    estimatedCompletionTime: "",
-    orderIndex: "",
-    isActive: true,
+    subTopicName: selectedSubtopic?.subTopicName || "",
+    orderIndex: selectedSubtopic?.orderIndex?.toString() || "",
+    difficultyLevel: selectedSubtopic?.difficultyLevel?.toString() || "",
+    estimatedCompletionTime: selectedSubtopic?.estimatedCompletionTime?.toString() || "",
+    isActive: selectedSubtopic?.isActive ?? true,
   };
 
   const validationSchema = Yup.object({
@@ -34,7 +35,6 @@ const SubTopicForm = ({ onAdd }) => {
       orderIndex: values.orderIndex ? parseInt(values.orderIndex, 10) : null,
       isActive: values.isActive,
     };
-
     onAdd(newSubTopic);
     resetForm();
   };
@@ -98,7 +98,7 @@ const SubTopicForm = ({ onAdd }) => {
             <div className="col-md-12">
               <Button
                 type="submit"
-                label={isSubmitting ? "Adding..." : "Add Subtopic"}
+                label={isSubmitting ? "Saving..." : selectedSubtopic ? "Update Topic" : "Add Topic"}
               />
             </div>
           </div>

@@ -5,9 +5,11 @@ import Dashboard from "./components/Dashboard";
 // import Subjects from "./components/Subjects";
 import Subjects from "./components/subjects/Subjects";
 import SubjectDetail from "./components/subjects/SubjectDetails";
-import Sessions from "./components/study-sessions/Sessions";
-// import Topics from "./components/Topics";
-// import Assessments from "./components/Assessments";
+import Sessions from "./pages/SessionPage";
+import Topics from "./components/topics/Topics";
+import TopicDetails from "./components/topics/TopicDetails";
+import SubTopics from "./components/sub-topics/SubTopic";
+//import Assessments from "./components/assessments/Assesment";
 // import Progress from "./components/Progress";
 // import Sessions from "./components/Sessions";
 import Login from "./components/Login";
@@ -48,24 +50,36 @@ const App = () => {
               // </ProtectedRoute>
             }
           />
-          {/*
           <Route
-
             path="/topics"
             element={
-              <ProtectedRoute>
+              //<ProtectedRoute>
                 <Topics />
-              </ProtectedRoute>
+              //</ProtectedRoute>
             }
           />
+          <Route
+            path="/topics/:topicId/:subjectId"
+            element={<TopicDetails />}
+          />
+          <Route
+            path="/subTopics"
+            element={
+              //<ProtectedRoute>
+                <SubTopics />
+              //</ProtectedRoute>
+            }
+          />
+          {/*
           <Route
             path="/assessments"
             element={
-              <ProtectedRoute>
+             // <ProtectedRoute>
                 <Assessments />
-              </ProtectedRoute>
+             // </ProtectedRoute>
             }
           />
+          
           <Route
             path="/progress"
             element={
@@ -77,9 +91,9 @@ const App = () => {
           <Route
             path="/sessions"
             element={
-              <ProtectedRoute>
+              //<ProtectedRoute>
                 <Sessions />
-              </ProtectedRoute>
+              //</ProtectedRoute>
             }
           />
         </Routes>

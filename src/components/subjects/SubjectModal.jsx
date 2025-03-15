@@ -1,37 +1,24 @@
 import React from "react";
 import SubjectForm from "./SubjectForm";
-import Button from "../common/Button";
 
-const SubjectModal = ({ show, onClose, onAdd }) => {
+const SubjectModal = ({ show, onClose, onSave, mode, subject }) => {
   if (!show) return null;
 
   const handleFormSubmit = (subjectData) => {
-    onAdd(subjectData);
-    onClose(); // close modal after adding subject
+    onSave(subjectData);
+    onClose(); // Close modal after saving
   };
-
   return (
     <>
-      <div
-        className="modal fade show"
-        style={{ display: "block" }}
-        tabIndex="-1"
-        aria-modal="true"
-        role="dialog"
-      >
+      <div className="modal fade show" style={{ display: "block" }} tabIndex="-1" role="dialog">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">Add New Subject</h5>
-              <button
-                type="button"
-                className="btn-close"
-                aria-label="Close"
-                onClick={onClose}
-              ></button>
+              <h5 className="modal-title">{mode === "edit" ? "Edit Subject" : "Add New Subject"}</h5>
+              <button type="button" className="btn-close" aria-label="Close" onClick={onClose}></button>
             </div>
             <div className="modal-body">
-              <SubjectForm onAdd={handleFormSubmit} />
+              <SubjectForm onSubmit={handleFormSubmit} existingSubject={subject} />
             </div>
           </div>
         </div>
