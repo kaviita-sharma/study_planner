@@ -5,10 +5,13 @@ import Button from "../common/Button";
 import { deleteSubTopic, fetchSubTopics } from "../../slices/subTopicSlice";
 import { useDispatch } from "react-redux";
 import SessionForm from "../study-sessions/SessionForm";
+import SessionPage from "../study-sessions/StudySessionPage";
 import { createSession } from "../../slices/sessionSlice";
+import { useNavigate } from "react-router-dom";
 
 const SubTopicCard = ({ subTopic, topicId, onEdit, onStartSession, onCreateSession, selectedSubTopic}) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showSessionForm, setShowSessionForm] = useState(false);
   const [prefillData, setPrefillData] = useState(null);
 
@@ -20,6 +23,7 @@ const SubTopicCard = ({ subTopic, topicId, onEdit, onStartSession, onCreateSessi
   const handleSessionButtonClick = () => {
     if (subTopic.sessionId) {
       onStartSession(subTopic);
+      navigate("/start-session");
     } else {
       onCreateSession(subTopic); 
       setShowSessionForm((prev) => !prev);

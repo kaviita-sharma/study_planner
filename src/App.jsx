@@ -15,6 +15,7 @@ import SubTopics from "./components/sub-topics/SubTopic";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Sessions1 from "./components/study-sessions/StudySessionPage";
 
 const App = () => {
   return (
@@ -93,6 +94,14 @@ const App = () => {
             element={
               //<ProtectedRoute>
                 <Sessions />
+              //</ProtectedRoute>
+            }
+          />
+          <Route
+            path="/start-session"
+            element={
+              //<ProtectedRoute>
+                <Sessions1 />
               //</ProtectedRoute>
             }
           />
